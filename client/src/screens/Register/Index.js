@@ -70,11 +70,10 @@ const RegisterScreen = (props) => {
         }
         formBody = formBody.join('&');
 
-        fetch('http://localhost:3000/api/user/register', {
+        fetch('http://localhost:3000/v1/user/register', {
             method: 'POST',
             body: formBody,
             headers: {
-                //Header Defination
                 'Content-Type':
                     'application/x-www-form-urlencoded;charset=UTF-8',
             },
@@ -154,7 +153,7 @@ const RegisterScreen = (props) => {
                             style={styles.inputStyle}
                             onChangeText={(UserName) => setUserName(UserName)}
                             underlineColorAndroid="#f000"
-                            placeholder="당신의 이름"
+                            placeholder="닉네임"
                             placeholderTextColor="#8b9cb5"
                             autoCapitalize="sentences"
                             returnKeyType="next"

@@ -1,7 +1,18 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
+    const [user, setUser] = useState(null);
+    useEffect(async () => {
+        await doGetUser();
+    }, []);
+
+    const doGetUser = async () => {
+        const getInfos = await AsyncStorage.getItem('user_infos');
+        const parseInfos = JSON.parse(getInfos);
+        setUser(parseInfos.user);
+    };
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{flex: 1, padding: 16}}>
@@ -19,6 +30,7 @@ const HomeScreen = () => {
                         }}>
                         메인화면
                         {'\n\n'}
+                        {JSON.stringify(user)}
                     </Text>
                 </View>
                 <Text

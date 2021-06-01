@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
     const [user, setUser] = useState(null);
     useEffect(async () => {
         await doGetUser();
@@ -11,7 +11,13 @@ const HomeScreen = () => {
     const doGetUser = async () => {
         const getInfos = await AsyncStorage.getItem('user_infos');
         const parseInfos = JSON.parse(getInfos);
-        setUser(parseInfos.user);
+
+        if (parseInfos) {
+            setUser(parseInfos.user);
+        } else {
+            AsyncStorage.clear();
+            props.navigation.replace('Auth');
+        }
     };
     return (
         <SafeAreaView style={{flex: 1}}>

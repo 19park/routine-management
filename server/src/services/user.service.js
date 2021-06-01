@@ -3,15 +3,30 @@ const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
+ * 일반회원가입 외 가입유저인지 확인
+ * @param oauthId
+ * @returns {Promise<Query<Document<any, any> | null, Document<any, any>, {}>>}
+ */
+const getExistOauthUser = async oauthId => {
+  return User.isExistOauthUser(oauthId);
+};
+
+/**
  * Create a user
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
 const createUser = async userBody => {
   if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, '이미 존재하는 이메일입니다.');
   }
-  const user = await User.create(userBody);
+  const defaultSchema = {
+    oauthType: 'default',
+    oauthId: null,
+    photo: null,
+  };
+  const mergeBody = { ...defaultSchema, ...userBody };
+  const user = await User.create(mergeBody);
   return user;
 };
 
@@ -81,6 +96,7 @@ const deleteUserById = async userId => {
 };
 
 module.exports = {
+  getExistOauthUser,
   createUser,
   queryUsers,
   getUserById,

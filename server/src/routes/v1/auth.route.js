@@ -6,6 +6,11 @@ const auth = require('../../middlewares/auth');
 
 const router = express.Router();
 
+router.get(
+  '/oauth/check',
+  validate(authValidation.checkOauthUser),
+  authController.checkOauthUser,
+);
 router.post(
   '/register',
   validate(authValidation.register),

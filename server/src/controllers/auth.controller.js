@@ -7,6 +7,11 @@ const {
   emailService,
 } = require('../services');
 
+const checkOauthUser = catchAsync(async (req, res) => {
+  const user = await userService.getExistOauthUser(req.params.oauthId);
+  res.send(user);
+});
+
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
@@ -57,6 +62,7 @@ const verifyEmail = catchAsync(async (req, res) => {
 });
 
 module.exports = {
+  checkOauthUser,
   register,
   login,
   logout,

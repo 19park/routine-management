@@ -35,12 +35,14 @@ const LoginScreen = ({navigation}) => {
         // isSignedIn()
     }, []);
 
+    // google login
     const signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
             console.log(userInfo);
             // setUser(userInfo)
+            await doCheckGoogleUser(userInfo);
         } catch (error) {
             console.log('Message', error.message);
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -52,6 +54,37 @@ const LoginScreen = ({navigation}) => {
             } else {
                 console.log('Some Other Error Happened');
             }
+        }
+    };
+
+    const doCheckGoogleUser = async userInfo => {
+        setLoading(true);
+        try {
+            const checkUser = await authApi.checkOauthUser({
+                oauthId: userInfo.user.id,
+            });
+            if (checkUser) {
+                console.log('checkUser = ', checkUser);
+                // 회원가입 된 구글회원 > 로그인 처리
+                // await authApi
+                //     .login({
+                //         email: userEmail,
+                //         password: userPassword
+                //     })
+                //     .then(doLoginResolve)
+                //     .catch((error) => {
+                //         alert(error.response.data.message);
+                //     });
+            } else {
+                // 회원가입 안 된 구글회원
+                navigation.navigate('RegisterScreen', {
+                    user: userInfo
+                });
+            }
+        } catch (error) {
+            alert('인증서버에 문제가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+        } finally {
+            setLoading(false);
         }
     };
     const isSignedIn = async () => {
@@ -102,18 +135,20 @@ const LoginScreen = ({navigation}) => {
                 email: userEmail,
                 password: userPassword
             })
-            .then(res => {
-                console.log(res);
-
-                setLoading(false);
-                AsyncStorage.setItem('user_id', res.user.email);
-                AsyncStorage.setItem('user_infos', JSON.stringify(res));
-                navigation.replace('DrawerNavigationRoutes');
-            })
+            .then(doLoginResolve)
             .catch((error) => {
-                setLoading(false);
                 alert(error.response.data.message);
+            })
+            .finally(() => {
+                setLoading(false);
             });
+    };
+
+    const doLoginResolve = res => {
+        console.log(res);
+
+        AsyncStorage.setItem('user_infos', JSON.stringify(res));
+        navigation.replace('DrawerNavigationRoutes');
     };
 
     return (

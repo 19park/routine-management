@@ -6,7 +6,6 @@ const {userService} = require('../services');
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
-  console.log('user created...');
   res.status(httpStatus.CREATED).send(user);
 });
 

@@ -34,6 +34,7 @@ module.exports = {
         'no-undef': ['error'],
         'no-console': ['off'],
         'no-unused-vars': ['warn'],
+        'react/display-name': ['off'],
         'react/prop-types': ['off'],
         'react/jsx-no-bind': ['off'],
         'react-native/no-single-element-style-arrays': 2,

@@ -56,6 +56,11 @@ const userSchema = mongoose.Schema(
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 
+userSchema.statics.isExistOauthUser = async function (oauthId) {
+  const user = await this.findOne({ oauthId });
+  return user;
+};
+
 /**
  * Check if email is taken
  * @param {string} email - The user's email

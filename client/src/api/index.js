@@ -1,6 +1,14 @@
 import {request} from './request';
 
 export const auth = {
+    // oauth 가입회원 체크
+    checkOauthUser(params) {
+        return request({
+            method: 'get',
+            url: '/auth/oauth/check',
+            params
+        });
+    },
     // 가입
     register(data) {
         return request({

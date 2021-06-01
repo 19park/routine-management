@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {GoogleSignin, GoogleSigninButton, statusCodes} from '@react-native-community/google-signin';
+import {auth as authApi} from '~/api';
 
 const Login = () => {
     const [user, setUser] = useState({});
@@ -11,14 +12,14 @@ const Login = () => {
             forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
             iosClientId: '', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
         });
-        isSignedIn()
+        isSignedIn();
     }, []);
     const signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
             console.log(userInfo);
-            setUser(userInfo)
+            setUser(userInfo);
         } catch (error) {
             console.log('Message', error.message);
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -34,10 +35,10 @@ const Login = () => {
     };
     const isSignedIn = async () => {
         const isSignedIn = await GoogleSignin.isSignedIn();
-        if (!!isSignedIn) {
-            getCurrentUserInfo()
+        if (isSignedIn) {
+            getCurrentUserInfo();
         } else {
-            console.log('Please Login')
+            console.log('Please Login');
         }
     };
     const getCurrentUserInfo = async () => {
@@ -49,8 +50,8 @@ const Login = () => {
                 alert('User has not signed in yet');
                 console.log('User has not signed in yet');
             } else {
-                alert("Something went wrong. Unable to get user's info");
-                console.log("Something went wrong. Unable to get user's info");
+                alert('Something went wrong. Unable to get user\'s info');
+                console.log('Something went wrong. Unable to get user\'s info');
             }
         }
     };
@@ -79,7 +80,7 @@ const Login = () => {
                 </TouchableOpacity>
             }
         </View>
-    )
+    );
 };
 const styles = StyleSheet.create({
     main: {

@@ -8,8 +8,26 @@ import {
 } from '@react-navigation/drawer';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {auth as authApi} from '~/api';
 
 const CustomSidebarMenu = (props) => {
+    const doLogout = async () => {
+        const getInfos = await AsyncStorage.getItem('user_infos');
+        const parseInfos = JSON.parse(getInfos);
+        console.log('parseInfos = ', parseInfos);
+        authApi
+            .logout({
+                refreshToken: parseInfos.tokens.refresh.token
+            })
+            .then(() => {
+                AsyncStorage.clear();
+                props.navigation.replace('Auth');
+            })
+            .catch(() => {
+                alert('로그아웃에 실패하였습니다.');
+            });
+    };
+
     return (
         <View style={stylesSidebar.sideMenuContainer}>
             <View style={stylesSidebar.profileHeader}>
@@ -29,27 +47,24 @@ const CustomSidebarMenu = (props) => {
                 <DrawerItem
                     label={({color}) =>
                         <Text style={{color: '#d8d8d8'}}>
-                            Logout
+                            로그아웃
                         </Text>
                     }
                     onPress={() => {
                         props.navigation.toggleDrawer();
                         Alert.alert(
-                            'Logout',
-                            'Are you sure? You want to logout?',
+                            '로그아웃',
+                            '로그아웃 하시겠습니까?',
                             [
                                 {
-                                    text: 'Cancel',
+                                    text: '취소',
                                     onPress: () => {
                                         return null;
                                     },
                                 },
                                 {
-                                    text: 'Confirm',
-                                    onPress: () => {
-                                        AsyncStorage.clear();
-                                        props.navigation.replace('Auth');
-                                    },
+                                    text: '확인',
+                                    onPress: doLogout,
                                 },
                             ],
                             {cancelable: false},

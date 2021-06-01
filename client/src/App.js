@@ -1,11 +1,11 @@
-import 'react-native-gesture-handler'
-import React from 'react'
-import Navigation from './navigation/navigation'
-import {Provider} from 'react-redux'
-import {store} from './stores'
-import {enableScreens} from 'react-native-screens'
+import 'react-native-gesture-handler';
+import React from 'react';
+import Navigation from './navigation/navigation';
+import {Provider} from 'react-redux';
+import {store} from './stores';
+import {enableScreens} from 'react-native-screens';
 
-enableScreens()
+enableScreens();
 
 const App = () => {
     return (
@@ -14,7 +14,7 @@ const App = () => {
                 <Navigation/>
             </Provider>
         </>
-    )
+    );
 };
 
-export default App
+export default App;

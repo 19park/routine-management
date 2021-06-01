@@ -12,12 +12,11 @@ import {
 } from 'react-native';
 
 import Loader from '../../components/Loader';
+import {auth as authApi} from '~/api';
 
 const RegisterScreen = (props) => {
     const [userName, setUserName] = useState('');
     const [userEmail, setUserEmail] = useState('');
-    const [userAge, setUserAge] = useState('');
-    const [userAddress, setUserAddress] = useState('');
     const [userPassword, setUserPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
@@ -27,8 +26,6 @@ const RegisterScreen = (props) => {
     ] = useState(false);
 
     const emailInputRef = createRef();
-    const ageInputRef = createRef();
-    const addressInputRef = createRef();
     const passwordInputRef = createRef();
 
     const handleSubmitButton = () => {
@@ -41,62 +38,27 @@ const RegisterScreen = (props) => {
             alert('이메일을 입력해주세요!');
             return;
         }
-        if (!userAge) {
-            alert('나이를 입력해주세요!');
-            return;
-        }
-        if (!userAddress) {
-            alert('주소를 입력해주세요!');
-            return;
-        }
         if (!userPassword) {
             alert('비밀번호를 입력해주세요!');
             return;
         }
-        //Show Loader
         setLoading(true);
-        var dataToSend = {
-            name: userName,
-            email: userEmail,
-            age: userAge,
-            address: userAddress,
-            password: userPassword,
-        };
-        var formBody = [];
-        for (var key in dataToSend) {
-            var encodedKey = encodeURIComponent(key);
-            var encodedValue = encodeURIComponent(dataToSend[key]);
-            formBody.push(encodedKey + '=' + encodedValue);
-        }
-        formBody = formBody.join('&');
+        authApi
+            .register({
+                name: userName,
+                email: userEmail,
+                password: userPassword,
+            })
+            .then(user => {
+                console.log(user);
 
-        fetch('http://localhost:3000/v1/user/register', {
-            method: 'POST',
-            body: formBody,
-            headers: {
-                'Content-Type':
-                    'application/x-www-form-urlencoded;charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                //Hide Loader
                 setLoading(false);
-                console.log(responseJson);
-                // If server response message same as Data Matched
-                if (responseJson.status === 'success') {
-                    setIsRegistraionSuccess(true);
-                    console.log(
-                        'Registration Successful. Please Login to proceed'
-                    );
-                } else {
-                    setErrortext(responseJson.msg);
-                }
+                setIsRegistraionSuccess(true);
+                alert('회원가입이 완료되었어요.');
             })
             .catch((error) => {
-                //Hide Loader
                 setLoading(false);
-                console.error(error);
+                alert(error.response.data.message);
             });
     };
     if (isRegistraionSuccess) {
@@ -129,7 +91,7 @@ const RegisterScreen = (props) => {
     }
     return (
         <View style={{flex: 1, backgroundColor: '#307ecc'}}>
-            <Loader loading={loading} />
+            <Loader loading={loading}/>
             <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{
@@ -192,42 +154,6 @@ const RegisterScreen = (props) => {
                             ref={passwordInputRef}
                             returnKeyType="next"
                             secureTextEntry={true}
-                            onSubmitEditing={() =>
-                                ageInputRef.current &&
-                                ageInputRef.current.focus()
-                            }
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <View style={styles.SectionStyle}>
-                        <TextInput
-                            style={styles.inputStyle}
-                            onChangeText={(UserAge) => setUserAge(UserAge)}
-                            underlineColorAndroid="#f000"
-                            placeholder="나이"
-                            placeholderTextColor="#8b9cb5"
-                            keyboardType="numeric"
-                            ref={ageInputRef}
-                            returnKeyType="next"
-                            onSubmitEditing={() =>
-                                addressInputRef.current &&
-                                addressInputRef.current.focus()
-                            }
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <View style={styles.SectionStyle}>
-                        <TextInput
-                            style={styles.inputStyle}
-                            onChangeText={(UserAddress) =>
-                                setUserAddress(UserAddress)
-                            }
-                            underlineColorAndroid="#f000"
-                            placeholder="주소"
-                            placeholderTextColor="#8b9cb5"
-                            autoCapitalize="sentences"
-                            ref={addressInputRef}
-                            returnKeyType="next"
                             onSubmitEditing={Keyboard.dismiss}
                             blurOnSubmit={false}
                         />
